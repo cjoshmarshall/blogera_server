@@ -30,6 +30,10 @@ router.put("/:id",async (req,res)=>{
 router.delete("/:id",async (req,res)=>{
 
     if(req.body.userId===req.params.id){
+        if(req.body.password){
+        const salt=await bcrypt.genSalt();
+        req.body.password=await bcrypt.hash(req.body.password,salt)
+        }
         try{
             const user=await User.findById(req.params.id)
             try{
@@ -42,7 +46,8 @@ router.delete("/:id",async (req,res)=>{
         }catch(err){
             res.status(404).json("User not found")
         }
-    }else{
+    }
+    else{
         res.status(401).json("Incorrect Password")
     }
 })
